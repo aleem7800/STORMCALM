@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="StormCalm – A gentle, sensory-safe space designed to soothe thunder and lightning anxiety (ceraunophobia) with guided breathing, lightning distance calculations, grounding, and gentle audio.">
+  <title>StormCalm – A Gentle Space for Thunder & Lightning Anxiety</title>
+  
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEMES (Calm Day & Night Mode)
+       ========================================================================== */
+    :root {
+      /* Base Colors - Day Mode */
+      --bg-gradient: linear-gradient(135deg, #eef2fa 0%, #e8edf7 35%, #f3eff9 70%, #faf8f5 100%);
+      --bg-mesh: radial-gradient(at 10% 20%, rgba(186, 204, 240, 0.4) 0px, transparent 50%),
+                 radial-gradient(at 90% 10%, rgba(220, 214, 247, 0.45) 0px, transparent 50%),
+                 radial-gradient(at 50% 80%, rgba(206, 235, 230, 0.35) 0px, transparent 60%);
+      --surface-bg: rgba(255, 255, 255, 0.78);
+      --surface-border: rgba(255, 255, 255, 0.75);
+      --surface-hover: rgba(255, 255, 255, 0.92);
+      --surface-card: rgba(255, 255, 255, 0.72);
+      
+      --text-main: #242c38;
+      --text-secondary: #4d5b6e;
+      --text-muted: #6e7d91;
+      
+      --primary: #6366f1;
+      --primary-soft: #edeefd;
+      --primary-hover: #4f46e5;
+      
+      --teal-soft: #388e8e;
+      --teal-bg: #e6f4f3;
+      
+      --lavender: #7c72c4;
+      --lavender-soft: #f0eef9;
+      
+      --amber-soft: #b47a2a;
+      --amber-bg: #fdf6ec;
+      
+      --shadow-sm: 0 4px 12px rgba(99, 102, 241, 0.05);
+      --shadow-md: 0 8px 24px rgba(45, 55, 72, 0.07);
+      --shadow-lg: 0 16px 36px rgba(45, 55, 72, 0.09);
+      
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      
+      --nav-bg: rgba(255, 255, 255, 0.85);
+      --nav-border: rgba(255, 255, 255, 0.9);
+      
+      --bubble-bg: radial-gradient(circle, #c7d2fe 0%, #a5b4fc 60%, #818cf8 100%);
+      --bubble-glow: 0 0 50px rgba(129, 140, 248, 0.45);
+      --bubble-text: #1e1b4b;
+      
+      --transition-normal: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    [data-theme="night"] {
+      /* Base Colors - Night Mode */
+      --bg-gradient: linear-gradient(135deg, #0d111c 0%, #131828 40%, #19162e 75%, #101523 100%);
+      --bg-mesh: radial-gradient(at 15% 15%, rgba(67, 56, 120, 0.3) 0px, transparent 55%),
+                 radial-gradient(at 85% 20%, rgba(35, 75, 100, 0.25) 0px, transparent 55%),
+                 radial-gradient(at 50% 85%, rgba(50, 40, 90, 0.25) 0px, transparent 65%);
+      --surface-bg: rgba(22, 27, 44, 0.72);
+      --surface-border: rgba(255, 255, 255, 0.09);
+      --surface-hover: rgba(28, 35, 58, 0.85);
+      --surface-card: rgba(22, 27, 44, 0.65);
+      
+      --text-main: #e8ecf4;
+      --text-secondary: #abb7cc;
+      --text-muted: #79879e;
+      
+      --primary: #818cf8;
+      --primary-soft: rgba(129, 140, 248, 0.16);
+      --primary-hover: #9ca3af;
+      
+      --teal-soft: #5eead4;
+      --teal-bg: rgba(94, 234, 212, 0.12);
+      
+      --lavender: #b4a7d6;
+      --lavender-soft: rgba(180, 167, 214, 0.12);
+      
+      --amber-soft: #fcd34d;
+      --amber-bg: rgba(252, 211, 77, 0.12);
+      
+      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 26px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+      
+      --nav-bg: rgba(15, 20, 34, 0.88);
+      --nav-border: rgba(255, 255, 255, 0.08);
+      
+      --bubble-bg: radial-gradient(circle, #4338ca 0%, #312e81 65%, #1e1b4b 100%);
+      --bubble-glow: 0 0 50px rgba(99, 102, 241, 0.35);
+      --bubble-text: #f1f5f9;
+    }
+
+    /* ==========================================================================
+       GLOBAL RESETS & ACCESSIBILITY
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.6s ease, color 0.4s ease;
+    }
+
+    /* Ambient background mesh */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-mesh);
+      pointer-events: none;
+      z-index: 0;
+      transition: background 0.6s ease;
+    }
+
+    /* Visible Focus State for Keyboard Accessibility */
+    :focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 3px;
+    }
+
+    /* Safe Reduced Motion Handling */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .breathing-bubble {
+        transition: none !important;
+      }
+    }
+
+    /* Typography & Utilities */
+    h1, h2, h3, h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: transform var(--transition-normal), background var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    /* Layout Container */
+    .app-container {
+      position: relative;
+      z-index: 1;
+      max-width: 1020px;
+      margin: 0 auto;
+      padding: 0 1.25rem 5rem;
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: var(--surface-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-md);
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal), background var(--transition-normal);
+    }
+
+    .glass-card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--primary-soft);
+    }
+
+    .card-title {
+      font-size: 1.45rem;
+      color: var(--text-main);
+    }
+
+    .card-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== */
+    .top-nav {
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      margin: 1rem auto 2rem;
+      max-width: 980px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--nav-border);
+      border-radius: var(--radius-full);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-main);
+      padding-left: 0.5rem;
+    }
+
+    .nav-brand-icon {
+      font-size: 1.3rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      list-style: none;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 0.2rem 0;
+    }
+
+    .nav-links::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: var(--radius-full);
+      background: var(--primary-soft);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--surface-border);
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--surface-hover);
+    }
+
+    /* ==========================================================================
+       HERO SECTION
+       ========================================================================== */
+    .hero-section {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      border-radius: var(--radius-lg);
+      background: var(--surface-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--surface-border);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 2rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: var(--radius-full);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-description {
+      font-size: 1.02rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: var(--radius-full);
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all var(--transition-normal);
+      min-height: 48px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 22px rgba(99, 102, 241, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .btn-anxious {
+      background: var(--lavender-soft);
+      color: var(--text-main);
+      border: 1px solid var(--surface-border);
+    }
+
+    .btn-anxious:hover {
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--surface-border);
+      background: var(--surface-card);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: var(--surface-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Rotating Calming Quote Banner */
+    .quote-box {
+      margin-top: 1.75rem;
+      padding: 1rem 1.5rem;
+      background: var(--primary-soft);
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      max-width: 720px;
+      width: 100%;
+      min-height: 64px;
+    }
+
+    .quote-text {
+      font-size: 0.98rem;
+      font-style: italic;
+      color: var(--text-main);
+      transition: opacity 0.5s ease;
+      flex: 1;
+    }
+
+    .quote-nav-btn {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-full);
+    }
+
+    .quote-nav-btn:hover {
+      color: var(--primary);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* ==========================================================================
+       CURRENT CALM STATUS CARD
+       ========================================================================== */
+    .status-card {
+      background: var(--surface-bg);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 2rem;
+      border: 1px solid var(--surface-border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .status-header-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-badges {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+    }
+
+    .status-pill-icon {
+      font-size: 1.4rem;
+    }
+
+    .status-pill-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: block;
+    }
+
+    .status-pill-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .calming-anchor-message {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      background: var(--lavender-soft);
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--primary);
+    }
+
+    /* ==========================================================================
+       SESSION PROGRESS TRACKER
+       ========================================================================== */
+    .session-progress-card {
+      margin-bottom: 2rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 12px;
+      background: var(--surface-card);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin: 1rem 0 1.25rem;
+      border: 1px solid var(--surface-border);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #818cf8 0%, #5eead4 100%);
+      border-radius: var(--radius-full);
+      transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .progress-tasks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .progress-task-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      background: var(--surface-card);
+    }
+
+    .progress-task-check {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      background: var(--surface-border);
+      color: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .progress-task-item.completed .progress-task-check {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .progress-task-item.completed {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       ANXIETY LEVEL CHECK-IN
+       ========================================================================== */
+    .anxiety-card {
+      margin-bottom: 2rem;
+    }
+
+    .slider-container {
+      margin: 1.5rem 0 1rem;
+    }
+
+    .anxiety-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, #a7f3d0 0%, #fde68a 50%, #fca5a5 100%);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .anxiety-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      cursor: grab;
+      transition: transform 0.15s ease;
+    }
+
+    .anxiety-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .anxiety-slider::-moz-range-thumb {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      cursor: grab;
+      transition: transform 0.15s ease;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .anxiety-feedback {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--primary-soft);
+      border-left: 4px solid var(--primary);
+      font-size: 0.98rem;
+      color: var(--text-main);
+      transition: all 0.3s ease;
+    }
+
+    /* ==========================================================================
+       GUIDED BREATHING SECTION
+       ========================================================================== */
+    .breathing-section {
+      text-align: center;
+    }
+
+    .breathing-bubble-stage {
+      position: relative;
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+
+    /* Gentle pulsing concentric ripples */
+    .bubble-pulse-ring {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      border: 2px dashed rgba(129, 140, 248, 0.25);
+      pointer-events: none;
+      transition: transform 0.8s ease;
+    }
+
+    .bubble-pulse-ring-outer {
+      position: absolute;
+      width: 370px;
+      height: 370px;
+      border-radius: 50%;
+      border: 1px solid rgba(129, 140, 248, 0.12);
+      pointer-events: none;
+    }
+
+    /* The interactive breathing circle */
+    .breathing-bubble {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: var(--bubble-bg);
+      box-shadow: var(--bubble-glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--bubble-text);
+      z-index: 2;
+      transform: scale(1);
+      will-change: transform;
+      user-select: none;
+      border: 3px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .phase-main-text {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .phase-sub-text {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .breathing-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .breathing-timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.75rem;
+    }
+
+    .breathing-notice {
+      min-height: 28px;
+      font-size: 0.92rem;
+      color: var(--teal-soft);
+      font-weight: 500;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Breathing pattern customization */
+    .pattern-selection-box {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--surface-border);
+      text-align: left;
+    }
+
+    .pattern-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+      margin: 1rem 0;
+    }
+
+    .pattern-btn {
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      border: 2px solid var(--surface-border);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pattern-btn:hover {
+      border-color: var(--primary);
+    }
+
+    .pattern-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .pattern-name {
+      display: block;
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .pattern-detail {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .medical-disclaimer-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+
+    /* ==========================================================================
+       CALM AUDIO SYNTHESIZER (Web Audio API)
+       ========================================================================== */
+    .audio-card {
+      margin-bottom: 2rem;
+    }
+
+    .audio-controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .audio-type-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-full);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      font-weight: 500;
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+
+    .audio-type-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+    }
+
+    .volume-slider-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 180px;
+      padding: 0.5rem 1rem;
+      background: var(--surface-card);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--surface-border);
+    }
+
+    .volume-slider {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      background: var(--text-muted);
+      border-radius: var(--radius-full);
+      outline: none;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       LIGHTNING DISTANCE CALCULATOR
+       ========================================================================== */
+    .distance-section {
+      margin-bottom: 2rem;
+    }
+
+    .distance-btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .flash-bang-btn {
+      padding: 1.5rem 1.25rem;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--surface-border);
+      background: var(--surface-card);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 120px;
+      transition: all 0.25s ease;
+    }
+
+    .flash-bang-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+
+    .flash-bang-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .flash-bang-btn.waiting {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--text-main);
+    }
+
+    .flash-bang-btn .btn-icon {
+      font-size: 2.2rem;
+    }
+
+    .timer-live-readout {
+      text-align: center;
+      padding: 1.25rem;
+      background: var(--primary-soft);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.25rem;
+    }
+
+    .timer-live-seconds {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+
+    .timer-live-instruction {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .distance-result-card {
+      margin-top: 1.25rem;
+      padding: 1.5rem;
+      background: var(--surface-card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--surface-border);
+      border-left: 6px solid #10b981;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .distance-number {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+
+    .distance-safety-warning {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       SCIENCE & REASSURANCE CARD
+       ========================================================================== */
+    .science-card {
+      margin-bottom: 2rem;
+    }
+
+    .science-facts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    .fact-item {
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .fact-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+
+    .fact-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .fact-text {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ==========================================================================
+       DISTRACTION MINI-GAMES
+       ========================================================================== */
+    .game-section {
+      margin-bottom: 2rem;
+    }
+
+    .game-tab-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .game-tab {
+      padding: 0.55rem 1.25rem;
+      border-radius: var(--radius-full);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .game-tab.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .game-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .game-question-box {
+      background: var(--primary-soft);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .game-question-text {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .game-answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .game-answer-btn {
+      padding: 1.1rem;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      border: 2px solid var(--surface-border);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .game-answer-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+
+    .game-feedback-banner {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      font-size: 0.98rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      opacity: 0;
+    }
+
+    .game-feedback-banner.show {
+      opacity: 1;
+    }
+
+    .game-feedback-banner.correct {
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+    }
+
+    .game-feedback-banner.incorrect {
+      background: var(--amber-bg);
+      color: var(--amber-soft);
+    }
+
+    /* Word Finder Game */
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .word-card-btn {
+      padding: 1rem 0.5rem;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      border: 2px solid var(--surface-border);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .word-card-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       5-4-3-2-1 GROUNDING EXERCISE
+       ========================================================================== */
+    .grounding-section {
+      margin-bottom: 2rem;
+    }
+
+    .grounding-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .grounding-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .grounding-step:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+    }
+
+    .grounding-step.checked {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .grounding-number-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface-border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .grounding-step.checked .grounding-number-badge {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .grounding-content {
+      flex: 1;
+    }
+
+    .grounding-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.25rem;
+    }
+
+    .grounding-hint {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .grounding-completion-message {
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    /* ==========================================================================
+       COMFORT & SAFETY TIPS (ACCORDION)
+       ========================================================================== */
+    .tips-section {
+      margin-bottom: 2rem;
+    }
+
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.25rem;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      background: var(--surface-card);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .accordion-trigger:hover {
+      background: var(--surface-hover);
+    }
+
+    .accordion-icon {
+      font-size: 1.2rem;
+      color: var(--primary);
+      transition: transform 0.3s ease;
+    }
+
+    .accordion-item.active .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0, 1, 0, 1), padding 0.35s ease;
+      padding: 0 1.5rem;
+    }
+
+    .accordion-item.active .accordion-content {
+      max-height: 400px;
+      padding: 0 1.5rem 1.25rem;
+    }
+
+    .accordion-body-text {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ==========================================================================
+       EMERGENCY / SAFETY NOTICE
+       ========================================================================== */
+    .emergency-card {
+      background: var(--surface-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--surface-border);
+      border-left: 6px solid #f59e0b;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .emergency-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .emergency-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .emergency-list li {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .emergency-list li::before {
+      content: "•";
+      color: #f59e0b;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .disclaimer-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--surface-border);
+      padding-top: 0.85rem;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    .app-footer {
+      text-align: center;
+      padding: 2.5rem 1rem 1.5rem;
+      border-top: 1px solid var(--surface-border);
+      color: var(--text-muted);
+    }
+
+    .footer-brand {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .footer-quote {
+      font-style: italic;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .footer-meta {
+      font-size: 0.82rem;
+    }
+
+    /* ==========================================================================
+       ANIMATIONS
+       ========================================================================== */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS (Mobile & Tablet)
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .app-container {
+        padding: 0 1rem 5.5rem;
+      }
+
+      .top-nav {
+        border-radius: var(--radius-lg);
+        top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+      }
+
+      .nav-brand span {
+        display: none;
+      }
+
+      .nav-links a span {
+        display: none;
+      }
+
+      .nav-links a {
+        padding: 0.45rem 0.65rem;
+        font-size: 1.1rem;
+      }
+
+      .hero-section {
+        padding: 2.5rem 1rem 1.75rem;
+      }
+
+      .glass-card {
+        padding: 1.35rem;
+      }
+
+      .distance-btn-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .game-answers-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .breathing-bubble-stage {
+        height: 320px;
+      }
+
+      .bubble-pulse-ring,
+      .bubble-pulse-ring-outer {
+        display: none;
+      }
+
+      .quote-box {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       TOP NAVIGATION BAR
+       ========================================================================== -->
+  <nav class="top-nav" aria-label="Main Navigation">
+    <a href="#home" class="nav-brand" aria-label="StormCalm Home">
+      <span class="nav-brand-icon">🌙</span>
+      <span>StormCalm</span>
+    </a>
+    
+    <ul class="nav-links">
+      <li><a href="#home" class="active" title="Home"><span>🏠 Home</span></a></li>
+      <li><a href="#breathe" title="Breathing Exercise"><span>🫁 Breathe</span></a></li>
+      <li><a href="#science" title="Storm Science"><span>⚡ Storm Science</span></a></li>
+      <li><a href="#distraction" title="Mind Puzzle"><span>🧩 Puzzle</span></a></li>
+      <li><a href="#grounding" title="5-4-3-2-1 Grounding"><span>🌿 Grounding</span></a></li>
+      <li><a href="#safety" title="Comfort & Safety Tips"><span>🛡 Safety</span></a></li>
+    </ul>
+
+    <button id="themeToggleBtn" class="theme-toggle-btn" aria-label="Toggle Night Mode" onclick="toggleNightMode()">
+      <span id="themeToggleIcon">🌙</span>
+      <span id="themeToggleText">Night Mode</span>
+    </button>
+  </nav>
+
+  <div class="app-container">
+    
+    <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+    <header id="home" class="hero-section">
+      <div class="hero-badge">
+        <span>🌙 Safe Haven</span>
+      </div>
+      <h1 class="hero-title">StormCalm</h1>
+      <p class="hero-subtitle">“A quiet place to breathe when the sky feels loud.”</p>
+      <p class="hero-description">
+        Thunderstorms can feel intense, but you don't have to face the moment alone. Use these gentle, sensory-safe tools to slow your breathing, understand the storm, and gently shift your attention.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="scrollToBreathing(true)">
+          <span>▶ Start Calm Session</span>
+        </button>
+        <button class="btn btn-anxious" onclick="scrollToBreathing(true)">
+          <span>🤍 I'm Feeling Anxious</span>
+        </button>
+      </div>
+
+      <!-- Rotating Calming Quote Card -->
+      <div class="quote-box" role="region" aria-label="Calming Affirmation">
+        <button class="quote-nav-btn" onclick="prevQuote()" aria-label="Previous quote">‹</button>
+        <p id="quoteDisplay" class="quote-text">“Storms pass. This moment will pass too.”</p>
+        <button class="quote-nav-btn" onclick="nextQuote()" aria-label="Next quote">›</button>
+      </div>
+    </header>
+
+    <!-- ==========================================================================
+         CURRENT CALM STATUS CARD
+         ========================================================================== -->
+    <section class="status-card" aria-label="Current Calm Status">
+      <div class="status-header-text">
+        <span>🛡</span>
+        <span>Right now, focus on what you can control.</span>
+      </div>
+      <div class="status-badges">
+        <div class="status-pill">
+          <span class="status-pill-icon">🫁</span>
+          <div>
+            <span class="status-pill-title">Breathing</span>
+            <span class="status-pill-desc">Steady, gentle rhythm</span>
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="status-pill-icon">🧠</span>
+          <div>
+            <span class="status-pill-title">Attention</span>
+            <span class="status-pill-desc">Here in this room</span>
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="status-pill-icon">🏠</span>
+          <div>
+            <span class="status-pill-title">Safety</span>
+            <span class="status-pill-desc">Sheltered from weather</span>
+          </div>
+        </div>
+      </div>
+      <div class="calming-anchor-message">
+        You are here. You are breathing. You can take this one moment at a time.
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SESSION PROGRESS CARD
+         ========================================================================== -->
+    <section class="glass-card session-progress-card" aria-label="Your Calm Session Progress">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🌱</span>
+          <div>
+            <h2 class="card-title">Your Calm Session</h2>
+            <p class="card-subtitle">Take your time. There is no rush or pressure.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-bar-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressBarContainer">
+        <div id="sessionProgressBar" class="progress-bar-fill"></div>
+      </div>
+
+      <div class="progress-tasks">
+        <div id="progTaskBreathing" class="progress-task-item">
+          <span class="progress-task-check">✓</span>
+          <span>Breathing (1 min)</span>
+        </div>
+        <div id="progTaskGrounding" class="progress-task-item">
+          <span class="progress-task-check">✓</span>
+          <span>5-4-3-2-1 Grounding</span>
+        </div>
+        <div id="progTaskPuzzle" class="progress-task-item">
+          <span class="progress-task-check">✓</span>
+          <span>Mind Puzzle</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         ANXIETY LEVEL CHECK-IN
+         ========================================================================== -->
+    <section class="glass-card anxiety-card" aria-label="Anxiety Level Check-In">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🌤</span>
+          <div>
+            <h2 class="card-title">How intense does your fear feel right now?</h2>
+            <p class="card-subtitle">A gentle check-in with yourself — no judgment, only awareness.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-container">
+        <input 
+          type="range" 
+          min="0" 
+          max="10" 
+          value="4" 
+          id="anxietySlider" 
+          class="anxiety-slider" 
+          aria-label="Anxiety Level from 0 to 10"
+          oninput="updateAnxietyLevel(this.value)"
+        >
+        <div class="slider-labels">
+          <span>0 – Calm</span>
+          <span>5 – Uncomfortable</span>
+          <span>10 – Very intense</span>
+        </div>
+      </div>
+
+      <div id="anxietyFeedbackText" class="anxiety-feedback" role="status">
+        That's okay. Let's take one slow breath together.
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         GUIDED BREATHING SECTION
+         ========================================================================== -->
+    <section id="breathe" class="glass-card breathing-section" aria-label="Guided Breathing Exercise">
+      <div class="card-header">
+        <div class="card-title-group" style="justify-content: center;">
+          <span class="card-icon">🫁</span>
+          <div>
+            <h2 class="card-title">Breathe With Me</h2>
+            <p class="card-subtitle">Let's slow things down together.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="breathing-timer-badge">
+        <span>⏱ Session:</span>
+        <span id="sessionTimerText">00:00</span>
+      </div>
+
+      <!-- Animated Breathing Stage -->
+      <div class="breathing-bubble-stage">
+        <div class="bubble-pulse-ring-outer" aria-hidden="true"></div>
+        <div class="bubble-pulse-ring" id="pulseRing" aria-hidden="true"></div>
+
+        <div id="breathingBubble" class="breathing-bubble" role="status" aria-live="polite">
+          <span id="phaseMainText" class="phase-main-text">Ready</span>
+          <span id="phaseSubText" class="phase-sub-text">Press Start</span>
+        </div>
+      </div>
+
+      <div id="breathingEncouragement" class="breathing-notice">
+        <!-- Notification fills here dynamically -->
+      </div>
+
+      <div class="breathing-controls">
+        <button id="startBreatheBtn" class="btn btn-primary" onclick="startBreathing()">
+          <span>▶ Start</span>
+        </button>
+        <button id="pauseBreatheBtn" class="btn btn-outline" onclick="pauseBreathing()" disabled>
+          <span>⏸ Pause</span>
+        </button>
+        <button id="restartBreatheBtn" class="btn btn-outline" onclick="resetBreathing()">
+          <span>↻ Restart</span>
+        </button>
+      </div>
+
+      <!-- Breathing Pattern Customizer -->
+      <div class="pattern-selection-box">
+        <h3 style="font-size: 1.05rem; margin-bottom: 0.35rem;">Breathing Settings</h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Choose a rhythm that feels naturally soothing to your body.</p>
+
+        <div class="pattern-options">
+          <button class="pattern-btn active" id="patBtn-444" onclick="selectBreathingPattern('4-4-4')">
+            <span class="pattern-name">4–4–4 Box Breathing</span>
+            <span class="pattern-detail">Inhale 4s • Hold 4s • Exhale 4s</span>
+          </button>
+          <button class="pattern-btn" id="patBtn-426" onclick="selectBreathingPattern('4-2-6')">
+            <span class="pattern-name">4–2–6 Gentle Release</span>
+            <span class="pattern-detail">Inhale 4s • Hold 2s • Exhale 6s</span>
+          </button>
+          <button class="pattern-btn" id="patBtn-446" onclick="selectBreathingPattern('4-4-6')">
+            <span class="pattern-name">4–4–6 Deep Relaxation</span>
+            <span class="pattern-detail">Inhale 4s • Hold 4s • Exhale 6s</span>
+          </button>
+        </div>
+
+        <p class="medical-disclaimer-note">
+          Note: These guided breathing patterns are gentle relaxation exercises to ease sensory tension, not a medical treatment.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CALM AUDIO OPTION (Web Audio API Synthesizer)
+         ========================================================================== -->
+    <section class="glass-card audio-card" aria-label="Calm Ambient Sound">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🎧</span>
+          <div>
+            <h2 class="card-title">Calming Sound Shelter</h2>
+            <p class="card-subtitle">Gentle synthetic ambience to mask sudden storm rumbles. Never autoplays.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="audio-controls-row">
+        <button id="rainAudioBtn" class="audio-type-btn" onclick="toggleAudio('rain')">
+          <span>🌧 Soft Rain</span>
+        </button>
+        <button id="noiseAudioBtn" class="audio-type-btn" onclick="toggleAudio('noise')">
+          <span>🌊 Pink/White Noise</span>
+        </button>
+        <button id="stopAudioBtn" class="audio-type-btn" onclick="stopAudio()" disabled>
+          <span>🔇 Stop Sound</span>
+        </button>
+
+        <div class="volume-slider-group">
+          <span id="volumeIcon" style="font-size: 1.1rem;">🔉</span>
+          <input 
+            type="range" 
+            min="0" 
+            max="1" 
+            step="0.05" 
+            value="0.3" 
+            id="audioVolumeSlider" 
+            class="volume-slider" 
+            aria-label="Audio Volume Slider"
+            oninput="setAudioVolume(this.value)"
+          >
+          <button id="muteAudioBtn" onclick="toggleMute()" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Mute</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         FLASH-TO-BANG LIGHTNING DISTANCE CALCULATOR
+         ========================================================================== -->
+    <section id="science" class="glass-card distance-section" aria-label="Storm Distance Calculator">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">⚡</span>
+          <div>
+            <h2 class="card-title">How Far Away Is The Storm?</h2>
+            <p class="card-subtitle">Light reaches you almost instantly, while sound travels much more slowly.</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+        The time between seeing lightning and hearing thunder gives a rough estimate of the storm's distance. Press <strong>Flash Seen</strong> when you see light, then <strong>Thunder Heard</strong> when the sound arrives.
+      </p>
+
+      <div class="distance-btn-grid">
+        <button id="flashBtn" class="flash-bang-btn" onclick="startLightningTimer()">
+          <span class="btn-icon">⚡</span>
+          <span id="flashBtnLabel">Flash Seen</span>
+          <span style="font-size: 0.85rem; font-weight: normal; opacity: 0.8;">Click as soon as you see light</span>
+        </button>
+
+        <button id="thunderBtn" class="flash-bang-btn" onclick="stopLightningTimer()" disabled>
+          <span class="btn-icon">🔊</span>
+          <span id="thunderBtnLabel">Thunder Heard</span>
+          <span style="font-size: 0.85rem; font-weight: normal; opacity: 0.8;">Click when the sound arrives</span>
+        </button>
+      </div>
+
+      <div id="liveTimerBox" class="timer-live-readout" style="display: none;">
+        <div id="liveSecondsDisplay" class="timer-live-seconds">0.0s</div>
+        <p id="liveTimerInstruction" class="timer-live-instruction">Take a slow breath while you wait…</p>
+      </div>
+
+      <div id="distanceResult" class="distance-result-card" role="status">
+        <div class="distance-number" id="distanceNumberDisplay">Approximate Distance: 0.0 km</div>
+        <p id="distanceElapsedDisplay" style="color: var(--text-muted); font-size: 0.95rem;">Time between flash and thunder: 0 seconds</p>
+        <div class="distance-safety-warning" id="distanceSafetyNotice">
+          This estimate suggests the lightning was several kilometers away. Remember that thunderstorms can change, so continue following local safety guidance.
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.88rem; color: var(--text-muted); font-style: italic;">
+          If you can hear thunder, lightning is close enough to be a potential hazard. Stay indoors and follow storm-safety guidance.
+        </div>
+        <button class="btn btn-outline" style="margin-top: 1.25rem;" onclick="resetLightningCalculator()">
+          <span>↻ Calculate Another Flash</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         SCIENCE & REASSURANCE CARD
+         ========================================================================== -->
+    <section class="glass-card science-card" aria-label="Science & Reassurance">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🔭</span>
+          <div>
+            <h2 class="card-title">A Little Science Can Make It Feel Less Mysterious</h2>
+            <p class="card-subtitle">Knowledge helps soothe fear by replacing the unknown with calm understanding.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="science-facts-grid">
+        <div class="fact-item">
+          <span class="fact-icon">⚡</span>
+          <div>
+            <h3 class="fact-title">Rapid Air Expansion</h3>
+            <p class="fact-text">Lightning heats the surrounding air extremely quickly. The rapid expansion and collapse of that heated air creates the acoustic shockwave we hear as thunder.</p>
+          </div>
+        </div>
+
+        <div class="fact-item">
+          <span class="fact-icon">🌟</span>
+          <div>
+            <h3 class="fact-title">Light vs. Sound</h3>
+            <p class="fact-text">We see lightning before hearing thunder because light travels at roughly 300,000 km/s, while sound travels at approximately 340 meters per second.</p>
+          </div>
+        </div>
+
+        <div class="fact-item">
+          <span class="fact-icon">🛡</span>
+          <div>
+            <h3 class="fact-title">Thunder Cannot Hurt You</h3>
+            <p class="fact-text">Thunder is simply acoustic vibrations in the atmosphere. The sound itself cannot harm you. Staying sheltered indoors keeps you safely away from electrical hazards.</p>
+          </div>
+        </div>
+
+        <div class="fact-item">
+          <span class="fact-icon">🏠</span>
+          <div>
+            <h3 class="fact-title">Buildings Offer Shelter</h3>
+            <p class="fact-text">Modern buildings with plumbing, electrical wiring, and grounded structures naturally guide electrical charges harmlessly into the earth.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         DISTRACTION MINI-GAMES
+         ========================================================================== -->
+    <section id="distraction" class="glass-card game-section" aria-label="Gentle Mind Distraction Games">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🧩</span>
+          <div>
+            <h2 class="card-title">Gentle Mind Puzzle</h2>
+            <p class="card-subtitle">Gently shifting your working memory away from the weather.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-tab-bar" role="tablist">
+        <button id="mathTabBtn" class="game-tab active" onclick="switchGameTab('math')">🧮 Gentle Math</button>
+        <button id="wordTabBtn" class="game-tab" onclick="switchGameTab('word')">🌸 Find the Calm Word</button>
+      </div>
+
+      <!-- Tab 1: Gentle Math -->
+      <div id="mathGameContainer">
+        <div class="game-meta-bar">
+          <span id="puzzleQuestionNum">Question #1</span>
+          <span id="puzzleScoreStreak">Score: 0 • Streak: 0 🌿</span>
+          <button class="btn-outline" style="padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.85rem;" onclick="generatePuzzle()">↻ New Question</button>
+        </div>
+
+        <div class="game-question-box">
+          <span id="mathQuestionText" class="game-question-text">What is 14 + 7?</span>
+        </div>
+
+        <div id="mathFeedbackBanner" class="game-feedback-banner" role="status">
+          <!-- Gentle feedback message -->
+        </div>
+
+        <div class="game-answers-grid" id="mathAnswersGrid">
+          <!-- 4 option buttons dynamically injected here -->
+        </div>
+      </div>
+
+      <!-- Tab 2: Find the Calm Word -->
+      <div id="wordGameContainer" style="display: none;">
+        <div class="game-meta-bar">
+          <span id="wordQuestionNum">Word Round #1</span>
+          <span id="wordScoreStreak">Calm Words Found: 0</span>
+          <button class="btn-outline" style="padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.85rem;" onclick="generateWordGame()">↻ Refresh Words</button>
+        </div>
+
+        <div class="game-question-box">
+          <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 0.4rem;">Find and select the calm word:</p>
+          <span id="targetWordDisplay" class="game-question-text" style="color: var(--primary); letter-spacing: 0.08em;">BREATHE</span>
+        </div>
+
+        <div id="wordFeedbackBanner" class="game-feedback-banner" role="status">
+          <!-- Word feedback here -->
+        </div>
+
+        <div class="word-grid" id="wordCardsGrid">
+          <!-- Word cards injected here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         5-4-3-2-1 GROUNDING EXERCISE
+         ========================================================================== -->
+    <section id="grounding" class="glass-card grounding-section" aria-label="5-4-3-2-1 Sensory Grounding">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🌿</span>
+          <div>
+            <h2 class="card-title">5–4–3–2–1 Grounding</h2>
+            <p class="card-subtitle">Anchoring your senses to the tangible, safe reality around you.</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        Take your time with each step. Click or tap each card once you have noticed these sensory anchors in your room:
+      </p>
+
+      <div class="grounding-list" id="groundingList">
+        <div class="grounding-step" id="gStep5" onclick="toggleGroundingStep(5)">
+          <div class="grounding-number-badge">5</div>
+          <div class="grounding-content">
+            <h3 class="grounding-title">Name 5 things you can see</h3>
+            <p class="grounding-hint">E.g., A lamp, the texture of a wall, your hands, a book, the floor pattern.</p>
+          </div>
+        </div>
+
+        <div class="grounding-step" id="gStep4" onclick="toggleGroundingStep(4)">
+          <div class="grounding-number-badge">4</div>
+          <div class="grounding-content">
+            <h3 class="grounding-title">Notice 4 things you can touch</h3>
+            <p class="grounding-hint">E.g., The softness of a blanket, your feet on the rug, smooth tabletop, your sleeves.</p>
+          </div>
+        </div>
+
+        <div class="grounding-step" id="gStep3" onclick="toggleGroundingStep(3)">
+          <div class="grounding-number-badge">3</div>
+          <div class="grounding-content">
+            <h3 class="grounding-title">Notice 3 sounds around you</h3>
+            <p class="grounding-hint">E.g., The gentle hum of an appliance, your own steady breath, the clock ticking.</p>
+          </div>
+        </div>
+
+        <div class="grounding-step" id="gStep2" onclick="toggleGroundingStep(2)">
+          <div class="grounding-number-badge">2</div>
+          <div class="grounding-content">
+            <h3 class="grounding-title">Notice 2 things you can smell</h3>
+            <p class="grounding-hint">E.g., Fresh air, warm tea, clean laundry, or take a deep neutral breath.</p>
+          </div>
+        </div>
+
+        <div class="grounding-step" id="gStep1" onclick="toggleGroundingStep(1)">
+          <div class="grounding-number-badge">1</div>
+          <div class="grounding-content">
+            <h3 class="grounding-title">Notice 1 thing you appreciate right now</h3>
+            <p class="grounding-hint">E.g., A sturdy roof over your head, a cozy sweater, this quiet breath.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="groundingCompletionMsg" class="grounding-completion-message" role="status">
+        You did it. You brought your attention back to the present moment. 🌿
+      </div>
+
+      <div style="text-align: right; margin-top: 1rem;">
+        <button class="btn btn-outline" style="font-size: 0.88rem; padding: 0.5rem 1rem;" onclick="resetGrounding()">↻ Reset Grounding</button>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         COMFORT & SAFETY TIPS (ACCORDION)
+         ========================================================================== -->
+    <section id="safety" class="glass-card tips-section" aria-label="Comfort & Safety Tips">
+      <div class="card-header">
+        <div class="card-title-group">
+          <span class="card-icon">🛋</span>
+          <div>
+            <h2 class="card-title">Make Your Space Feel Safer</h2>
+            <p class="card-subtitle">Practical, actionable steps to feel grounded and secure indoors.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-list">
+        <!-- Card 1 -->
+        <div class="accordion-item" id="accItem1">
+          <button class="accordion-trigger" onclick="toggleAccordion(1)" aria-expanded="false" aria-controls="accContent1">
+            <span>1. Stay Indoors</span>
+            <span class="accordion-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="accContent1" class="accordion-content">
+            <p class="accordion-body-text">
+              During a thunderstorm, stay inside a substantial building or enclosed vehicle when possible. Safe indoor structures have protective grounding paths that disperse electricity safely into the ground.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="accordion-item" id="accItem2">
+          <button class="accordion-trigger" onclick="toggleAccordion(2)" aria-expanded="false" aria-controls="accContent2">
+            <span>2. Move Away From Windows</span>
+            <span class="accordion-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="accContent2" class="accordion-content">
+            <p class="accordion-body-text">
+              Stay away from windows, doors, balconies, and exposed outdoor areas. Draw curtains or blinds shut if seeing sudden flashes triggers anxiety; this softens visual stimuli while keeping you sheltered.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="accordion-item" id="accItem3">
+          <button class="accordion-trigger" onclick="toggleAccordion(3)" aria-expanded="false" aria-controls="accContent3">
+            <span>3. Avoid Electrical Hazards</span>
+            <span class="accordion-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="accContent3" class="accordion-content">
+            <p class="accordion-body-text">
+              Avoid using corded electrical equipment or touching metal plumbing during severe thunderstorms, and follow local safety guidance. Cordless devices and cell phones are safe to use.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="accordion-item" id="accItem4">
+          <button class="accordion-trigger" onclick="toggleAccordion(4)" aria-expanded="false" aria-controls="accContent4">
+            <span>4. Reduce the Noise</span>
+            <span class="accordion-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="accContent4" class="accordion-content">
+            <p class="accordion-body-text">
+              Try headphones, calming music, white noise, or a familiar comforting TV show if thunder feels overwhelming. Creating an acoustic barrier gently reduces acoustic startling.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="accordion-item" id="accItem5">
+          <button class="accordion-trigger" onclick="toggleAccordion(5)" aria-expanded="false" aria-controls="accContent5">
+            <span>5. Stay Informed</span>
+            <span class="accordion-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="accContent5" class="accordion-content">
+            <p class="accordion-body-text">
+              Use a trusted official weather service or local emergency alert system for storm updates. Avoid continuous doom-scrolling; checking in once or twice is enough to stay informed and safe.
+            </p>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="accordion-item" id="accItem6">
+          <button class="accordion-trigger" onclick="toggleAccordion(6)" aria-expanded="false" aria-controls="accContent6">
+            <span>6. Give Yourself Permission to Feel Afraid</span>
+            <span class="accordion-icon" aria-hidden="true">▾</span>
+          </button>
+          <div id="accContent6" class="accordion-content">
+            <p class="accordion-body-text">
+              Fear is a natural, protective biological response. You don't have to force yourself to feel completely calm immediately. Focus simply on the next small step, and let your body settle in its own time.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         EMERGENCY / SAFETY NOTICE
+         ========================================================================== -->
+    <section class="emergency-card" aria-label="When the storm is nearby">
+      <h2 class="emergency-title">
+        <span>⚠️</span>
+        <span>When the storm is nearby</span>
+      </h2>
+      <ul class="emergency-list">
+        <li>Stay indoors in a substantial building</li>
+        <li>Avoid open spaces and high ground</li>
+        <li>Stay away from glass windows and doors</li>
+        <li>Follow local weather alerts and official guidance</li>
+        <li>If authorities issue emergency instructions, follow them</li>
+      </ul>
+      <p class="disclaimer-text">
+        This app provides general calming and safety information. It is not a substitute for emergency services, professional mental-health care, or official weather warnings.
+      </p>
+    </section>
+
+    <!-- ==========================================================================
+         FINAL FOOTER
+         ========================================================================== -->
+    <footer class="app-footer">
+      <div class="footer-brand">StormCalm</div>
+      <p class="footer-quote">“Breathe slowly. Stay grounded. Take one moment at a time.”</p>
+      <p class="footer-meta">
+        For general information and relaxation support only. Works 100% locally on your device with no external tracking.
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. GLOBAL STATE & LOCAL STORAGE INITIALIZATION
+       ========================================================================== */
+    const STORAGE_KEY = 'stormcalm_settings_v1';
+
+    let appState = {
+      theme: 'day', // 'day' | 'night'
+      anxietyLevel: 4,
+      breathingPattern: '4-4-4', // '4-4-4', '4-2-6', '4-4-6'
+      audioVolume: 0.3,
+      isMuted: false,
+      activeAudioType: null, // 'rain' | 'noise' | null
+      tasks: {
+        breathing: false,
+        grounding: false,
+        puzzle: false
+      }
+    };
+
+    // Load saved preferences safely
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        appState = { ...appState, ...parsed };
+      }
+    } catch (e) {
+      console.warn('localStorage is unavailable or restricted:', e);
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.warn('Unable to save to localStorage:', e);
+      }
+    }
+
+    /* ==========================================================================
+       2. NIGHT / CALM DAY MODE
+       ========================================================================== */
+    function toggleNightMode() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'night' ? 'day' : 'night';
+      applyTheme(newTheme);
+      appState.theme = newTheme;
+      saveState();
+    }
+
+    function applyTheme(theme) {
+      if (theme === 'night') {
+        document.documentElement.setAttribute('data-theme', 'night');
+        document.getElementById('themeToggleIcon').textContent = '☀️';
+        document.getElementById('themeToggleText').textContent = 'Calm Day';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        document.getElementById('themeToggleIcon').textContent = '🌙';
+        document.getElementById('themeToggleText').textContent = 'Night Mode';
+      }
+    }
+
+    /* ==========================================================================
+       3. REASSURING ROTATING QUOTES
+       ========================================================================== */
+    const calmingQuotes = [
+      "“Storms pass. This moment will pass too.”",
+      "“You don't need to control the weather. You only need to care for yourself right now.”",
+      "“Slow breath. Soft shoulders. One moment at a time.”",
+      "“Fear can be loud, but you can choose a small, steady action.”",
+      "“Right now, you are safe indoors. Let the walls protect you.”",
+      "“You have made it through every storm before this one.”",
+      "“The thunder is just noise. It cannot reach inside your sanctuary.”"
+    ];
+
+    let currentQuoteIndex = 0;
+    let quoteInterval = null;
+
+    function showQuote(index) {
+      const quoteEl = document.getElementById('quoteDisplay');
+      if (!quoteEl) return;
+      quoteEl.style.opacity = '0';
+      setTimeout(() => {
+        currentQuoteIndex = (index + calmingQuotes.length) % calmingQuotes.length;
+        quoteEl.textContent = calmingQuotes[currentQuoteIndex];
+        quoteEl.style.opacity = '1';
+      }, 300);
+    }
+
+    function nextQuote() {
+      showQuote(currentQuoteIndex + 1);
+      resetQuoteTimer();
+    }
+
+    function prevQuote() {
+      showQuote(currentQuoteIndex - 1);
+      resetQuoteTimer();
+    }
+
+    function resetQuoteTimer() {
+      if (quoteInterval) clearInterval(quoteInterval);
+      quoteInterval = setInterval(() => {
+        showQuote(currentQuoteIndex + 1);
+      }, 9000);
+    }
+
+    /* ==========================================================================
+       4. ANXIETY LEVEL CHECK-IN
+       ========================================================================== */
+    function updateAnxietyLevel(val) {
+      const num = parseInt(val, 10);
+      appState.anxietyLevel = num;
+      saveState();
+
+      const feedbackEl = document.getElementById('anxietyFeedbackText');
+      if (!feedbackEl) return;
+
+      if (num <= 2) {
+        feedbackEl.textContent = "You're feeling relatively calm. Keep breathing gently and enjoying your safe space.";
+      } else if (num <= 5) {
+        feedbackEl.textContent = "That's okay. Let's take one slow breath together. You are safe here.";
+      } else if (num <= 8) {
+        feedbackEl.textContent = "Stay with the breathing exercise. Focus only on the next few seconds and feeling your feet on the ground.";
+      } else {
+        feedbackEl.textContent = "If you feel overwhelmed or unsafe, reach out to someone you trust or contact local emergency guidance. You don't have to carry this alone.";
+      }
+    }
+
+    /* ==========================================================================
+       5. GUIDED BREATHING ENGINE (JS Timer + requestAnimationFrame)
+       ========================================================================== */
+    const breathingPatterns = {
+      '4-4-4': { name: '4-4-4 Box Breathing', inhale: 4, hold: 4, exhale: 4 },
+      '4-2-6': { name: '4-2-6 Gentle Release', inhale: 4, hold: 2, exhale: 6 },
+      '4-4-6': { name: '4-4-6 Deep Relaxation', inhale: 4, hold: 4, exhale: 6 }
+    };
+
+    let breathingState = {
+      isRunning: false,
+      isPaused: false,
+      phase: 'ready', // 'inhale', 'hold', 'exhale'
+      phaseStartTime: 0,
+      phaseElapsedBeforePause: 0,
+      currentScale: 1,
+      totalSessionSeconds: 0,
+      sessionTimerInterval: null,
+      animationFrameId: null,
+      encouragementShown: false
+    };
+
+    function selectBreathingPattern(patternKey) {
+      if (!breathingPatterns[patternKey]) return;
+      appState.breathingPattern = patternKey;
+      saveState();
+
+      document.querySelectorAll('.pattern-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`patBtn-${patternKey.replace(/-/g, '')}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (breathingState.isRunning) {
+        resetBreathing();
+        startBreathing();
+      }
+    }
+
+    function scrollToBreathing(autoStart = false) {
+      const section = document.getElementById('breathe');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      if (autoStart && !breathingState.isRunning) {
+        startBreathing();
+      }
+    }
+
+    function startBreathing() {
+      if (breathingState.isRunning && !breathingState.isPaused) return;
+
+      const bubble = document.getElementById('breathingBubble');
+      const startBtn = document.getElementById('startBreatheBtn');
+      const pauseBtn = document.getElementById('pauseBreatheBtn');
+
+      if (breathingState.isPaused) {
+        // Resume from pause
+        breathingState.isPaused = false;
+        breathingState.phaseStartTime = performance.now() - breathingState.phaseElapsedBeforePause;
+      } else {
+        // Fresh start
+        breathingState.isRunning = true;
+        breathingState.isPaused = false;
+        breathingState.phase = 'inhale';
+        breathingState.phaseStartTime = performance.now();
+        breathingState.phaseElapsedBeforePause = 0;
+      }
+
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      bubble.style.transition = 'none';
+
+      // Start session elapsed timer
+      if (!breathingState.sessionTimerInterval) {
+        breathingState.sessionTimerInterval = setInterval(updateBreathingSessionTimer, 1000);
+      }
+
+      runBreathingLoop();
+    }
+
+    function pauseBreathing() {
+      if (!breathingState.isRunning || breathingState.isPaused) return;
+
+      breathingState.isPaused = true;
+      cancelAnimationFrame(breathingState.animationFrameId);
+
+      const elapsed = performance.now() - breathingState.phaseStartTime;
+      breathingState.phaseElapsedBeforePause = elapsed;
+
+      clearInterval(breathingState.sessionTimerInterval);
+      breathingState.sessionTimerInterval = null;
+
+      document.getElementById('startBreatheBtn').disabled = false;
+      document.getElementById('pauseBreatheBtn').disabled = true;
+
+      document.getElementById('phaseMainText').textContent = 'Paused';
+      document.getElementById('phaseSubText').textContent = 'Take your time.';
+    }
+
+    function updateBreathingPhase(nextPhase) {
+      breathingState.phase = nextPhase;
+      breathingState.phaseStartTime = performance.now();
+    }
+
+    function resetBreathing() {
+      cancelAnimationFrame(breathingState.animationFrameId);
+      breathingState.isRunning = true;
+      breathingState.isPaused = false;
+      updateBreathingPhase('inhale');
+      breathingState.phaseElapsedBeforePause = 0;
+
+      const bubble = document.getElementById('breathingBubble');
+      bubble.style.transform = 'scale(1)';
+      const pulseRing = document.getElementById('pulseRing');
+      if (pulseRing) pulseRing.style.transform = 'scale(1)';
+
+      document.getElementById('startBreatheBtn').disabled = true;
+      document.getElementById('pauseBreatheBtn').disabled = false;
+
+      document.getElementById('phaseMainText').textContent = 'Breathe In';
+      const pattern = breathingPatterns[appState.breathingPattern] || breathingPatterns['4-4-4'];
+      document.getElementById('phaseSubText').textContent = `${pattern.inhale} seconds`;
+
+      if (!breathingState.sessionTimerInterval) {
+        breathingState.sessionTimerInterval = setInterval(updateBreathingSessionTimer, 1000);
+      }
+      runBreathingLoop();
+    }
+
+    function updateBreathingSessionTimer() {
+      breathingState.totalSessionSeconds++;
+      const mins = String(Math.floor(breathingState.totalSessionSeconds / 60)).padStart(2, '0');
+      const secs = String(breathingState.totalSessionSeconds % 60).padStart(2, '0');
+      document.getElementById('sessionTimerText').textContent = `${mins}:${secs}`;
+
+      // Complete breathing task after 1 full minute (60s)
+      if (breathingState.totalSessionSeconds >= 60 && !breathingState.encouragementShown) {
+        breathingState.encouragementShown = true;
+        document.getElementById('breathingEncouragement').textContent = "Beautiful. You gave yourself a full minute to slow down.";
+        markTaskComplete('breathing');
+      }
+    }
+
+    function runBreathingLoop() {
+      if (!breathingState.isRunning || breathingState.isPaused) return;
+
+      const pattern = breathingPatterns[appState.breathingPattern] || breathingPatterns['4-4-4'];
+      const now = performance.now();
+      const elapsedSeconds = (now - breathingState.phaseStartTime) / 1000;
+
+      let duration = pattern[breathingState.phase];
+
+      if (elapsedSeconds >= duration) {
+        // Transition to next phase
+        let nextPhase = 'inhale';
+        if (breathingState.phase === 'inhale') {
+          nextPhase = 'hold';
+        } else if (breathingState.phase === 'hold') {
+          nextPhase = 'exhale';
+        } else {
+          nextPhase = 'inhale';
+        }
+        updateBreathingPhase(nextPhase);
+        duration = pattern[breathingState.phase];
+      }
+
+      const phaseProgress = Math.min(1, Math.max(0, (performance.now() - breathingState.phaseStartTime) / (duration * 1000)));
+      updateBreathingVisuals(breathingState.phase, phaseProgress, duration);
+
+      breathingState.animationFrameId = requestAnimationFrame(runBreathingLoop);
+    }
+
+    function updateBreathingVisuals(phase, progress, duration) {
+      const bubble = document.getElementById('breathingBubble');
+      const pulseRing = document.getElementById('pulseRing');
+      const mainText = document.getElementById('phaseMainText');
+      const subText = document.getElementById('phaseSubText');
+
+      const minScale = 1.0;
+      const maxScale = 1.45;
+      let scale = 1.0;
+
+      if (phase === 'inhale') {
+        scale = minScale + (maxScale - minScale) * progress;
+        mainText.textContent = "Breathe In";
+        const remaining = Math.max(1, Math.ceil(duration - (duration * progress)));
+        subText.textContent = `${remaining} seconds`;
+      } else if (phase === 'hold') {
+        scale = maxScale;
+        mainText.textContent = "Hold";
+        const remaining = Math.max(1, Math.ceil(duration - (duration * progress)));
+        subText.textContent = `${remaining} seconds`;
+      } else if (phase === 'exhale') {
+        scale = maxScale - (maxScale - minScale) * progress;
+        mainText.textContent = "Breathe Out";
+        const remaining = Math.max(1, Math.ceil(duration - (duration * progress)));
+        subText.textContent = `${remaining} seconds`;
+      }
+
+      breathingState.currentScale = scale;
+      bubble.style.transform = `scale(${scale})`;
+      if (pulseRing) {
+        pulseRing.style.transform = `scale(${1 + (scale - 1) * 0.4})`;
+      }
+    }
+
+    /* ==========================================================================
+       6. FLASH-TO-BANG LIGHTNING DISTANCE CALCULATOR
+       ========================================================================== */
+    let lightningState = {
+      isWaiting: false,
+      startTime: 0,
+      timerInterval: null
+    };
+
+    function startLightningTimer() {
+      // Prevent double starts
+      if (lightningState.isWaiting) return;
+
+      lightningState.isWaiting = true;
+      lightningState.startTime = performance.now();
+
+      const flashBtn = document.getElementById('flashBtn');
+      const thunderBtn = document.getElementById('thunderBtn');
+      const flashLabel = document.getElementById('flashBtnLabel');
+      const liveBox = document.getElementById('liveTimerBox');
+      const liveDisplay = document.getElementById('liveSecondsDisplay');
+      const liveInstruction = document.getElementById('liveTimerInstruction');
+      const resultCard = document.getElementById('distanceResult');
+
+      flashBtn.classList.add('waiting');
+      flashLabel.textContent = "Waiting for thunder…";
+      thunderBtn.disabled = false;
+      resultCard.style.display = 'none';
+      liveBox.style.display = 'block';
+
+      lightningState.timerInterval = setInterval(() => {
+        const elapsed = (performance.now() - lightningState.startTime) / 1000;
+        liveDisplay.textContent = `${elapsed.toFixed(1)}s`;
+
+        if (elapsed > 45) {
+          liveInstruction.textContent = "Over 45 seconds have passed — the thunder may be too far to hear (over 15 km away) or safe from hearing range.";
+        } else {
+          liveInstruction.textContent = "Take a slow breath while you wait…";
+        }
+      }, 100);
+    }
+
+    function stopLightningTimer() {
+      if (!lightningState.isWaiting) return;
+
+      clearInterval(lightningState.timerInterval);
+      const elapsedSeconds = (performance.now() - lightningState.startTime) / 1000;
+      lightningState.isWaiting = false;
+
+      calculateDistance(elapsedSeconds);
+
+      document.getElementById('thunderBtn').disabled = true;
+      document.getElementById('flashBtn').classList.remove('waiting');
+      document.getElementById('flashBtnLabel').textContent = "Flash Seen";
+      document.getElementById('liveTimerBox').style.display = 'none';
+    }
+
+    function calculateDistance(seconds) {
+      // Distance in kilometers ≈ seconds ÷ 3
+      const distKm = (seconds / 3).toFixed(1);
+      const roundedSeconds = Math.round(seconds);
+
+      const resultCard = document.getElementById('distanceResult');
+      const distDisplay = document.getElementById('distanceNumberDisplay');
+      const elapsedDisplay = document.getElementById('distanceElapsedDisplay');
+      const safetyNotice = document.getElementById('distanceSafetyNotice');
+
+      distDisplay.textContent = `Approximate Distance: ${distKm} km`;
+      elapsedDisplay.textContent = `Time between flash and thunder: ${roundedSeconds} seconds`;
+
+      if (seconds < 6) {
+        safetyNotice.textContent = "This estimate suggests the lightning was close (under 2 km). Remember that thunderstorms can change, so stay indoors and follow storm-safety guidance.";
+      } else {
+        safetyNotice.textContent = "This estimate suggests the lightning was several kilometers away. Remember that thunderstorms can change, so continue following local safety guidance.";
+      }
+
+      resultCard.style.display = 'block';
+    }
+
+    function resetLightningCalculator() {
+      clearInterval(lightningState.timerInterval);
+      lightningState.isWaiting = false;
+
+      document.getElementById('flashBtn').classList.remove('waiting');
+      document.getElementById('flashBtnLabel').textContent = "Flash Seen";
+      document.getElementById('thunderBtn').disabled = true;
+      document.getElementById('liveTimerBox').style.display = 'none';
+      document.getElementById('distanceResult').style.display = 'none';
+    }
+
+    /* ==========================================================================
+       7. DISTRACTION MINI-GAMES
+       ========================================================================== */
+    let puzzleState = {
+      score: 0,
+      streak: 0,
+      questionCount: 1,
+      correctAnswer: 0
+    };
+
+    function switchGameTab(tab) {
+      const mathBtn = document.getElementById('mathTabBtn');
+      const wordBtn = document.getElementById('wordTabBtn');
+      const mathCont = document.getElementById('mathGameContainer');
+      const wordCont = document.getElementById('wordGameContainer');
+
+      if (tab === 'math') {
+        mathBtn.classList.add('active');
+        wordBtn.classList.remove('active');
+        mathCont.style.display = 'block';
+        wordCont.style.display = 'none';
+      } else {
+        mathBtn.classList.remove('active');
+        wordBtn.classList.add('active');
+        mathCont.style.display = 'none';
+        wordCont.style.display = 'block';
+        if (wordState.words.length === 0) generateWordGame();
+      }
+    }
+
+    function generatePuzzle() {
+      const operations = ['+', '-', '×', '÷'];
+      const op = operations[Math.floor(Math.random() * operations.length)];
+      let a, b, answer, questionText;
+
+      if (op === '+') {
+        a = Math.floor(Math.random() * 25) + 5;
+        b = Math.floor(Math.random() * 25) + 5;
+        answer = a + b;
+        questionText = `What is ${a} + ${b}?`;
+      } else if (op === '-') {
+        a = Math.floor(Math.random() * 30) + 15;
+        b = Math.floor(Math.random() * a);
+        answer = a - b;
+        questionText = `What is ${a} − ${b}?`;
+      } else if (op === '×') {
+        a = Math.floor(Math.random() * 9) + 2;
+        b = Math.floor(Math.random() * 8) + 2;
+        answer = a * b;
+        questionText = `What is ${a} × ${b}?`;
+      } else {
+        // Small division
+        b = Math.floor(Math.random() * 6) + 2;
+        answer = Math.floor(Math.random() * 8) + 2;
+        a = b * answer;
+        questionText = `What is ${a} ÷ ${b}?`;
+      }
+
+      puzzleState.correctAnswer = answer;
+      document.getElementById('mathQuestionText').textContent = questionText;
+      document.getElementById('puzzleQuestionNum').textContent = `Question #${puzzleState.questionCount}`;
+
+      // Generate 4 distinct choices
+      const choices = new Set([answer]);
+      while (choices.size < 4) {
+        const offset = (Math.floor(Math.random() * 7) + 1) * (Math.random() > 0.5 ? 1 : -1);
+        const wrong = answer + offset;
+        if (wrong >= 0 && wrong !== answer) {
+          choices.add(wrong);
+        }
+      }
+
+      const shuffledChoices = Array.from(choices).sort(() => Math.random() - 0.5);
+      const grid = document.getElementById('mathAnswersGrid');
+      grid.innerHTML = '';
+
+      shuffledChoices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'game-answer-btn';
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(choice);
+        grid.appendChild(btn);
+      });
+
+      const banner = document.getElementById('mathFeedbackBanner');
+      banner.className = 'game-feedback-banner';
+      banner.textContent = '';
+    }
+
+    function checkAnswer(chosen) {
+      const banner = document.getElementById('mathFeedbackBanner');
+      const isCorrect = chosen === puzzleState.correctAnswer;
+
+      if (isCorrect) {
+        puzzleState.score += 10;
+        puzzleState.streak++;
+        banner.className = 'game-feedback-banner correct show';
+        banner.textContent = "Nice! Your attention just shifted for a moment. 🌿";
+        markTaskComplete('puzzle');
+      } else {
+        puzzleState.streak = 0;
+        banner.className = 'game-feedback-banner incorrect show';
+        banner.textContent = "That's okay. Try another one — there is no pressure.";
+      }
+
+      document.getElementById('puzzleScoreStreak').textContent = `Score: ${puzzleState.score} • Streak: ${puzzleState.streak} 🌿`;
+
+      // Disable buttons temporarily then generate new question
+      const buttons = document.querySelectorAll('#mathAnswersGrid button');
+      buttons.forEach(b => b.disabled = true);
+
+      setTimeout(() => {
+        puzzleState.questionCount++;
+        generatePuzzle();
+      }, 1400);
+    }
+
+    /* Word Finder Game */
+    const calmWordBank = [
+      "BREATHE", "CALM", "GENTLE", "PEACE", "SAFE",
+      "SHELTER", "SERENE", "QUIET", "SLOW", "REST",
+      "HARBOR", "WARM", "STEADY", "SOFT", "CLOVER"
+    ];
+
+    let wordState = {
+      round: 1,
+      targetWord: '',
+      words: [],
+      score: 0
+    };
+
+    function generateWordGame() {
+      // In round 1, explicitly ask to find "BREATHE" as requested
+      const target = wordState.round === 1 
+        ? "BREATHE" 
+        : calmWordBank[Math.floor(Math.random() * calmWordBank.length)];
+      wordState.targetWord = target;
+
+      // Select 5 distractors
+      const pool = calmWordBank.filter(w => w !== target);
+      pool.sort(() => Math.random() - 0.5);
+      const list = [target, ...pool.slice(0, 5)];
+      list.sort(() => Math.random() - 0.5);
+      wordState.words = list;
+
+      document.getElementById('targetWordDisplay').textContent = target;
+      document.getElementById('wordQuestionNum').textContent = `Round #${wordState.round}`;
+
+      const grid = document.getElementById('wordCardsGrid');
+      grid.innerHTML = '';
+
+      list.forEach(w => {
+        const btn = document.createElement('button');
+        btn.className = 'word-card-btn';
+        btn.textContent = w;
+        btn.onclick = () => checkWordChoice(w);
+        grid.appendChild(btn);
+      });
+
+      const banner = document.getElementById('wordFeedbackBanner');
+      banner.className = 'game-feedback-banner';
+      banner.textContent = '';
+    }
+
+    function checkWordChoice(word) {
+      const banner = document.getElementById('wordFeedbackBanner');
+      if (word === wordState.targetWord) {
+        wordState.score++;
+        banner.className = 'game-feedback-banner correct show';
+        banner.textContent = `Found "${word}"! Gentle deep breath in… 🌸`;
+        document.getElementById('wordScoreStreak').textContent = `Calm Words Found: ${wordState.score}`;
+        markTaskComplete('puzzle');
+
+        setTimeout(() => {
+          wordState.round++;
+          generateWordGame();
+        }, 1300);
+      } else {
+        banner.className = 'game-feedback-banner incorrect show';
+        banner.textContent = `That's ${word}. Look for "${wordState.targetWord}" — take your time.`;
+      }
+    }
+
+    /* ==========================================================================
+       8. 5-4-3-2-1 GROUNDING EXERCISE
+       ========================================================================== */
+    const groundingChecked = { 5: false, 4: false, 3: false, 2: false, 1: false };
+
+    function toggleGroundingStep(num) {
+      groundingChecked[num] = !groundingChecked[num];
+      const stepEl = document.getElementById(`gStep${num}`);
+      if (stepEl) {
+        stepEl.classList.toggle('checked', groundingChecked[num]);
+      }
+      updateGroundingProgress();
+    }
+
+    function updateGroundingProgress() {
+      const totalChecked = Object.values(groundingChecked).filter(Boolean).length;
+      const completionMsg = document.getElementById('groundingCompletionMsg');
+
+      if (totalChecked === 5) {
+        completionMsg.style.display = 'block';
+        markTaskComplete('grounding');
+      } else {
+        completionMsg.style.display = 'none';
+      }
+    }
+
+    function resetGrounding() {
+      for (let i = 1; i <= 5; i++) {
+        groundingChecked[i] = false;
+        const stepEl = document.getElementById(`gStep${i}`);
+        if (stepEl) stepEl.classList.remove('checked');
+      }
+      updateGroundingProgress();
+    }
+
+    /* ==========================================================================
+       9. COMFORT & SAFETY TIPS (ACCORDION)
+       ========================================================================== */
+    function toggleAccordion(index) {
+      const item = document.getElementById(`accItem${index}`);
+      const trigger = item.querySelector('.accordion-trigger');
+      const isActive = item.classList.contains('active');
+
+      if (isActive) {
+        item.classList.remove('active');
+        trigger.setAttribute('aria-expanded', 'false');
+      } else {
+        item.classList.add('active');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    /* ==========================================================================
+       10. CALM AUDIO SYNTHESIZER (Web Audio API)
+       ========================================================================== */
+    let audioCtx = null;
+    let masterGain = null;
+    let currentNoiseSource = null;
+    let filterNode = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(appState.isMuted ? 0 : appState.audioVolume, audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function createPinkNoiseBuffer() {
+      const bufferSize = audioCtx.sampleRate * 5; // 5-second seamless buffer
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      // Paul Kellet's refined pink noise filter algorithm
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.06;
+        b6 = white * 0.115926;
+      }
+      return buffer;
+    }
+
+    function toggleAudio(type) {
+      try {
+        initAudioContext();
+
+        if (appState.activeAudioType === type) {
+          stopAudio();
+          return;
+        }
+
+        stopAudio(); // stop existing
+        appState.activeAudioType = type;
+
+        const rainBtn = document.getElementById('rainAudioBtn');
+        const noiseBtn = document.getElementById('noiseAudioBtn');
+        const stopBtn = document.getElementById('stopAudioBtn');
+
+        if (type === 'rain') {
+          rainBtn.classList.add('active');
+          noiseBtn.classList.remove('active');
+        } else {
+          noiseBtn.classList.add('active');
+          rainBtn.classList.remove('active');
+        }
+        stopBtn.disabled = false;
+
+        // Create noise node
+        const buffer = createPinkNoiseBuffer();
+        currentNoiseSource = audioCtx.createBufferSource();
+        currentNoiseSource.buffer = buffer;
+        currentNoiseSource.loop = true;
+
+        // Filter: soft rain uses gentle lowpass + bandpass
+        filterNode = audioCtx.createBiquadFilter();
+        if (type === 'rain') {
+          filterNode.type = 'lowpass';
+          filterNode.frequency.setValueAtTime(800, audioCtx.currentTime);
+          filterNode.Q.setValueAtTime(1.5, audioCtx.currentTime);
+        } else {
+          // Ocean / pink noise: warm deep lowpass
+          filterNode.type = 'lowpass';
+          filterNode.frequency.setValueAtTime(450, audioCtx.currentTime);
+        }
+
+        currentNoiseSource.connect(filterNode);
+        filterNode.connect(masterGain);
+        currentNoiseSource.start();
+      } catch (err) {
+        console.warn('Web Audio synthesis is unavailable or failed gracefully:', err);
+      }
+    }
+
+    function stopAudio() {
+      if (currentNoiseSource) {
+        try {
+          currentNoiseSource.stop();
+          currentNoiseSource.disconnect();
+        } catch (e) {
+          // ignore already stopped errors
+        }
+        currentNoiseSource = null;
+      }
+
+      appState.activeAudioType = null;
+      document.getElementById('rainAudioBtn').classList.remove('active');
+      document.getElementById('noiseAudioBtn').classList.remove('active');
+      document.getElementById('stopAudioBtn').disabled = true;
+    }
+
+    function setAudioVolume(val) {
+      const vol = parseFloat(val);
+      appState.audioVolume = vol;
+      saveState();
+
+      if (masterGain && audioCtx && !appState.isMuted) {
+        masterGain.gain.setValueAtTime(vol, audioCtx.currentTime);
+      }
+    }
+
+    function toggleMute() {
+      appState.isMuted = !appState.isMuted;
+      saveState();
+
+      const muteBtn = document.getElementById('muteAudioBtn');
+      if (muteBtn) muteBtn.textContent = appState.isMuted ? 'Unmute' : 'Mute';
+
+      if (masterGain && audioCtx) {
+        masterGain.gain.setValueAtTime(appState.isMuted ? 0 : appState.audioVolume, audioCtx.currentTime);
+      }
+    }
+
+    /* ==========================================================================
+       11. SESSION PROGRESS TRACKING
+       ========================================================================== */
+    function markTaskComplete(taskKey) {
+      if (appState.tasks[taskKey]) return; // already completed
+      appState.tasks[taskKey] = true;
+      saveState();
+      renderProgress();
+    }
+
+    function renderProgress() {
+      const keys = ['breathing', 'grounding', 'puzzle'];
+      let completedCount = 0;
+
+      keys.forEach(k => {
+        const item = document.getElementById(`progTask${k.charAt(0).toUpperCase() + k.slice(1)}`);
+        if (appState.tasks[k]) {
+          completedCount++;
+          if (item) item.classList.add('completed');
+        } else {
+          if (item) item.classList.remove('completed');
+        }
+      });
+
+      const percentage = Math.round((completedCount / keys.length) * 100);
+      const bar = document.getElementById('sessionProgressBar');
+      const container = document.getElementById('progressBarContainer');
+
+      if (bar) bar.style.width = `${percentage}%`;
+      if (container) container.setAttribute('aria-valuenow', percentage);
+    }
+
+    /* ==========================================================================
+       12. INITIALIZATION ON PAGE LOAD
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Apply theme
+      applyTheme(appState.theme);
+
+      // Start quote rotation
+      resetQuoteTimer();
+
+      // Apply initial anxiety level
+      const anxietySlider = document.getElementById('anxietySlider');
+      if (anxietySlider) {
+        anxietySlider.value = appState.anxietyLevel;
+        updateAnxietyLevel(appState.anxietyLevel);
+      }
+
+      // Initialize selected breathing pattern button
+      selectBreathingPattern(appState.breathingPattern || '4-4-4');
+
+      // Initialize distraction games
+      generatePuzzle();
+
+      // Volume slider sync
+      const volSlider = document.getElementById('audioVolumeSlider');
+      if (volSlider) volSlider.value = appState.audioVolume;
+      const muteBtn = document.getElementById('muteAudioBtn');
+      if (muteBtn && appState.isMuted) muteBtn.textContent = 'Unmute';
+
+      // Render progress
+      renderProgress();
+
+      // Active nav link highlight on scroll
+      const sections = document.querySelectorAll('header[id], section[id]');
+      const navLinks = document.querySelectorAll('.nav-links a');
+
+      window.addEventListener('scroll', () => {
+        let currentId = 'home';
+        const scrollPosition = window.scrollY + 140;
+
+        sections.forEach(section => {
+          if (scrollPosition >= section.offsetTop) {
+            currentId = section.getAttribute('id');
+          }
+        });
+
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${currentId}`) {
+            link.classList.add('active');
+          }
+        });
+      }, { passive: true });
+    });
+  </script>
+</body>
+</html>
